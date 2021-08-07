@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "copuR",
+  "description": "Auto Copy in stickey notes",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "off.png"
+  },
+  "icons": {
+    "16": "default.png",
+    "32": "default.png",
+    "48": "default.png",
+    "128": "default.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "http://*/*",
+    "https://*/*",
+    "clipboardRead",
+    "clipboardWrite",
+    "*://*/*"
+  ],
+  "web_accessible_resources": [
+    "contentScript.js"
+  ]
+}
