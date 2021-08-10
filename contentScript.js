@@ -1,4 +1,6 @@
-///////////////////////////////// SELECT TEXT ////////////////////////////////
+let today = new Date().toLocaleString();
+
+//////////////////////////////// SELECT TEXT ////////////////////////////////
 
 function getSelectionText() {
 	var text = "";
@@ -17,8 +19,7 @@ function copyText() {
 	chrome.storage.sync.get('isRunning', function (data) {
 		var isRunning = data.isRunning;
 		if (isRunning) {
-			console.log('copy text func activated');
-			let thetext = getSelectionText();
+			var thetext = getSelectionText();
 
 			if (thetext.length > 0) {
 				chrome.storage.sync.get('text', function (data) {
@@ -28,11 +29,13 @@ function copyText() {
 					console.log(newText);
 					listener({ 'name': "create_window", 'content': newText });
 					listener({ 'name': "create_window", 'content': newText });
+
+
 				});
 
 			}
 			else {
-				thetext = ""
+				thetext = "";
 			}
 
 		}
@@ -42,15 +45,29 @@ function copyText() {
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////// MODAL & EVENT ///////////////////////////////
-
+let myId = chrome.runtime.id;
 if (typeof modal_x === 'undefined') {
 	let modal_x = 0;
 	let modal_y = 0;
 
-	let styleString = `.chrome-extension-modal-content{background-color:#fcf49d;border-radius:15px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);margin:auto;position:absolute;z-index:999998;padding:5px;border:1px solid #888;width:32rem;justify-content:center;align-items:center;overflow:auto;max-height:40rem}.chrome-extension-modal-content p{padding:30px;font-size:15px;font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif}.chrome-extension-modal-loading{display:flex;justify-content:center;align-items:center}.chrome-extension-modal-loading .dot{position:relative;width:.5em;height:.5em;margin:.3em;border-radius:50%;padding:0}.chrome-extension-modal-loading .dot::before{position:absolute;content:"";width:100%;height:100%;background:inherit;border-radius:inherit;animation:wave 2s ease-out infinite}.chrome-extension-modal-loading .dot:nth-child(1){background:#7ef9ff}.chrome-extension-modal-loading .dot:nth-child(1)::before{animation-delay:.2s}.chrome-extension-modal-loading .dot:nth-child(2){background:#89cff0}.chrome-extension-modal-loading .dot:nth-child(2)::before{animation-delay:.4s}.chrome-extension-modal-loading .dot:nth-child(3){background:#4682b4}.chrome-extension-modal-loading .dot:nth-child(3)::before{animation-delay:.6s}.chrome-extension-modal-loading .dot:nth-child(4){background:#0f52ba}.chrome-extension-modal-loading .dot:nth-child(4)::before{animation-delay:.8s}.chrome-extension-modal-loading .dot:nth-child(5){background:navy}.chrome-extension-modal-loading .dot:nth-child(5)::before{animation-delay:1s}@keyframes wave{50%,75%{transform:scale(2.5)}100%,80%{opacity:0}}.chrome-extension-close{    background-color: transparent;
-        border: 0px;float:right;font-size:28px;font-weight:700;}.chrome-extension-close:hover{ color: red;cursor:pointer }.close:focus,.close:hover{text-decoration:none;}.column { float: left;padding: 5px;}.row{margin-left: 25px;}.row::after { content: ""; clear: both; display: inline;}hr{margin-left: 30px;margin-right: 30px;} figcaption{font-size: 15px} `;
-	let modal_inner_html_string = `<button class="chrome-extension-close">&times;</button> <br> `;
-	let modal_html_string = `<div class="chrome-extension-modal-content" >` + modal_inner_html_string + ` </div> `;
+	let styleString = `.chrome-extension-modal-content{background-color:#fcf49d;border-radius:15px;
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+		width: 32rem;border:1px solid #888;	position:absolute;overflow:auto; }
+		.content{margin:auto;z-index:999998;width: 100%;justify-content:center;align-items:center;overflow:auto;max-height:35rem; }
+		.copur-header{background-color: #f7e461;width: 100%;height: 30px;text-align-last: left;padding-top: 5px;font-size: 15px;}
+		.title{padding-left: 20px;font-weight: 300;}
+	.chrome-extension-modal-content p{padding:30px;font-size:15px;font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif}
+	.chrome-extension-close{background-color: transparent; border: 0px;float:right;font-size:35px;font-weight:700; position: absolute;top:-5px;right: 0px;}
+	.chrome-extension-close:hover{ color: red;cursor:pointer }.close:focus,.close:hover{text-decoration:none;}
+	.column { float: left;padding: 5px;}
+	.row{margin-left: 25px;}.row::after { content: ""; clear: both; display: inline;}
+	hr{margin-left: 30px;margin-right: 30px;}
+	figcaption{font-size: 15px}
+	.copy{background-color: transparent;border: 0px;position: absolute;top: 5px;right: 35px;}
+	.copy:hover{cursor: pointer;} 
+	.eraser{border: 0px;position: absolute;top: 5px;right: 65px;} .eraser:hover{cursor:pointer}`;
+	let modal_inner_html_string = `<button class="chrome-extension-close">&times;</button>`;
+	let modal_html_string = `<div class="chrome-extension-modal-content" ><div class="copur-header"> <span class="title">Rupok</span> </div>` + modal_inner_html_string + `<div class="content"></div> </div> `;
 
 	const dragElement = function (elmnt) {
 		var pos1 = 0,
@@ -104,22 +121,39 @@ if (typeof modal_x === 'undefined') {
 			addStyle(styleString);
 			modal_content = document.getElementsByClassName("chrome-extension-modal-content")[0];
 			if (modal_content == null) {
-				console.log("null");
 				let modal_element = createElementFromHTML(modal_html_string);
+				console.log(modal_element);
 				document.body.append(modal_element);
 			}
 
 			else {
-				modal_content.innerHTML = "<button class='chrome-extension-close'>&times;</button>" + "<p>" + request.content + "</p>";
+				modal_content.innerHTML = "<div class='copur-header'> <span class='title'>" +
+					today + "</span> </div>" + "<img src='chrome-extension://" + myId + "/images/eraser_1.png' class='eraser' style='height: 20px;'>" +
+					"<img src='chrome-extension://" + myId + "/images/copy.png' class='copy' style='height: 20px;'><button class='chrome-extension-close'>&times;</button>" +
+					"<div class='content'>" + "<p id='copuR'>" + request.content + "</p>" + "</div>";
+
+
+
 			}
 			var span = document.getElementsByClassName("chrome-extension-close")[0];
 			span.onclick = function () {
-				chrome.storage.local.set({
-					in_progress: false
-				}, function () {
-				});
 				modal_content.style.display = "none";
 			};
+
+			var copyButton = document.getElementsByClassName("copy")[0];
+			copyButton.onclick = function () {
+				navigator.clipboard.writeText(request.content);
+			};
+
+			var copyButton = document.getElementsByClassName("eraser")[0];
+			copyButton.onclick = function () {
+				modal_content.innerHTML = "<div class='copur-header'> <span class='title'>" +
+					today + "</span> </div>" + "<img src='chrome-extension://" + myId + "/images/eraser_1.png' class='eraser' style='height: 20px;'>" +
+					"<img src='chrome-extension://" + myId + "/images/copy.png' class='copy' style='height: 20px;'><button class='chrome-extension-close'>&times;</button>" +
+					"<div class='content'>" + "<p id='copuR'>" + " " + "</p>" + "</div>";
+				chrome.storage.sync.set({ 'text': " " });
+			};
+
 			var modal_content = document.getElementsByClassName("chrome-extension-modal-content")[0];
 			modal_content.style.display = "block";
 			dragElement(modal_content);
@@ -145,14 +179,4 @@ if (typeof modal_x === 'undefined') {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
 
